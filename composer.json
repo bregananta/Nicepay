@@ -2,18 +2,26 @@
     "name": "bregananta/nicepay",
     "description": "Laravel integration to NicePay Payment Gateway",
     "license": "MIT",
-    "autoload": {
-        "psr-4": {
-            "Bregananta\\Nicepay\\": "src/"
-        }
-    },
     "authors": [
         {
             "name": "Kunto Bregananta Adi",
             "email": "bregananta@gmail.com"
         }
     ],
+    "autoload": {
+        "psr-4": {
+            "Bregananta\\Nicepay\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Bregananta\\Nicepay\\Tests\\": "tests/"
+        }
+    },
     "require-dev": {
         "orchestra/testbench": "^7.5"
+    },
+    "require": {
+        "guzzlehttp/guzzle": "^7.4"
     }
 }
