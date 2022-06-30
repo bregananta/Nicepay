@@ -14,7 +14,6 @@ class Nicepay
      * @param $amt
      * @param $referenceNo
      * @param $goodsNm
-     * @param $dbProcessUrl
      * @param $billingNm
      * @param $billingPhone
      * @param $billingEmail
@@ -43,7 +42,7 @@ class Nicepay
      * @return string
      */
     public function registerVa(string $bankCd, string $vacctValidDt, string $vacctValidTm, $amt, string $referenceNo,
-                               string $goodsNm, string $dbProcessUrl, string $billingNm, string $billingPhone,
+                               string $goodsNm, string $billingNm, string $billingPhone,
                                string $billingEmail, string $billingAddr = '', string $billingCity = '',
                                string $billingState = '', string $billingPostCd = '', string $billingCountry = '',
                                string $deliveryNm ='', string $deliveryPhone = '', string $deliveryAddr = '',
@@ -80,7 +79,7 @@ class Nicepay
             'deliveryPostCd' => $deliveryPostCd,
             'deliveryCountry' => $deliveryCountry,
             'description' => $description,
-            'dbProcessUrl' => $dbProcessUrl,
+            'dbProcessUrl' => config('nicepay-config.dbprocess_url'),
             'merchantToken' => $this->getMerchantToken($timeStamp, $referenceNo, $amt),
             'reqDomain' => $reqDomain,
             'reqServerIP' => $reqServerIP,
@@ -105,8 +104,8 @@ class Nicepay
      */
     protected function getMerchantToken($timestamp, $referenceNo, $amount)
     {
-        $iMid = config('nicepay-config.nicepay_imid');
-        $merchantKey = config('nicepay-config.nicepay_merchant_key');
+        $iMid = config('nicepay-config.imid');
+        $merchantKey = config('nicepay-config.merchant_key');
 
         return hash('sha256', $timestamp . $iMid . $referenceNo . $amount . $merchantKey);
     }
@@ -118,7 +117,7 @@ class Nicepay
      */
     protected function apiRequest($path, $body)
     {
-        $url = config('nicepay-config.nicepay_base_url') .'/'. $path;
+        $url = config('nicepay-config.base_url') .'/'. $path;
 
         return Http::post($url, $body)->body();
     }

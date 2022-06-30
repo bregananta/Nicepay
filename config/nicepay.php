@@ -1,7 +1,9 @@
 <?php
 
 return [
-    'nicepay_base_url' => env('NICEPAY_BASE_URL', ''),
-    'nicepay_imid' => env('NICEPAY_IMID', ''),
-    'nicepay_merchant_key' => env('NICEPAY_MERCHANT_KEY', '')
+    'base_url' => env('NICEPAY_BASE_URL', ''),
+    'imid' => env('NICEPAY_IMID', ''),
+    'merchant_key' => env('NICEPAY_MERCHANT_KEY', ''),
+    'callback_url' => env('NICEPAY_CALLBACK_URL', ''),
+    'dbprocess_url' => env('NICEPAY_DBPROCESS_URL', '')
 ];
