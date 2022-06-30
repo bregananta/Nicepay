@@ -15,9 +15,11 @@ class NicepayBaseServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__.'/../config/nicepay.php', 'nicepay-config');
 
         if ($this->app->runningInConsole()) {
+
             $this->publishes([
                 __DIR__.'/../config/nicepay.php' => config_path('nicepay.php'),
             ], 'nicepay-config');
+            
         }
     }
 

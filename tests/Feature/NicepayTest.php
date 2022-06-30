@@ -18,20 +18,20 @@ class NicepayTest extends TestCase
         Http::fake();
 
         Nicepay::registerVa('CENA', '20220619', '203100', 10000, 'ORD12345',
-            'Test Transaction Nicepay', 'http://ptsv2.com/t/0ftrz-1519971382/post',
-            'Customer Name', '12345678', 'email@merchant.com');
+        'Test Transaction Nicepay', 'Customer Name', '12345678',
+        'email@merchant.com');
 
         $timeStamp = Carbon::parse(now('Asia/Jakarta'));
         $timeStamp = $timeStamp->format('YmdHis');
 
-        $iMid = config('nicepay-config.nicepay_imid');
-        $merchantKey = config('nicepay-config.nicepay_merchant_key');
+        $iMid = config('nicepay-config.imid');
+        $merchantKey = config('nicepay-config.merchant_key');
 
         $merchantToken = hash('sha256', $timeStamp . $iMid . 'ORD12345' . '10000' . $merchantKey);
 
         Http::assertSent(function (Request $request) use ($timeStamp, $merchantToken) {
             return $request['timeStamp'] == $timeStamp &&
-            $request['iMid'] == config('nicepay-config.nicepay_imid') &&
+            $request['iMid'] == config('nicepay-config.imid') &&
             $request['payMethod'] == '02' &&
             $request['currency'] == 'IDR' &&
             $request['amt'] == '10000' &&

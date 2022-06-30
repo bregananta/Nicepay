@@ -57,7 +57,7 @@ class Nicepay
 
         $body = [
             'timeStamp' => $timeStamp,
-            'iMid' => config('nicepay-config.nicepay_imid'),
+            'iMid' => config('nicepay-config.imid'),
             'payMethod' => '02',
             'currency' => $currency,
             'amt' => $amt,
