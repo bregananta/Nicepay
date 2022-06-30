@@ -6,6 +6,10 @@ use Illuminate\Support\ServiceProvider;
 
 class NicepayBaseServiceProvider extends ServiceProvider
 {
+
+    /**
+     * @return void
+     */
     public function boot()
     {
         $this->mergeConfigFrom(__DIR__.'/../config/nicepay.php', 'nicepay-config');
@@ -17,6 +21,9 @@ class NicepayBaseServiceProvider extends ServiceProvider
         }
     }
 
+    /**
+     * @return void
+     */
     public function register()
     {
         $this->app->bind('Nicepay', function ($app) {

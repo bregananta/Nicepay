@@ -18,6 +18,16 @@
             "Bregananta\\Nicepay\\Tests\\": "tests/"
         }
     },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Bregananta\\Nicepay\\NicepayBaseServiceProvider"
+            ],
+            "aliases": {
+                "Nicepay": "Bregananta\\Nicepay\\Facades\\Nicepay"
+            }
+        }
+    },
     "require-dev": {
         "orchestra/testbench": "^7.5"
     },
