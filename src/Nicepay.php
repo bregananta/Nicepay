@@ -60,7 +60,7 @@ class Nicepay
             'iMid' => config('nicepay-config.imid'),
             'payMethod' => '02',
             'currency' => $currency,
-            'amt' => $amt,
+            'amt' => (int)$amt,
             'referenceNo' => $referenceNo,
             'goodsNm' => $goodsNm,
             'billingNm' => $billingNm,
@@ -80,7 +80,7 @@ class Nicepay
             'deliveryCountry' => $deliveryCountry,
             'description' => $description,
             'dbProcessUrl' => config('nicepay-config.dbprocess_url'),
-            'merchantToken' => $this->getMerchantToken($timeStamp, $referenceNo, $amt),
+            'merchantToken' => $this->getMerchantToken($timeStamp, $referenceNo, (int)$amt),
             'reqDomain' => $reqDomain,
             'reqServerIP' => $reqServerIP,
             'userIP' => $userIP,
@@ -119,6 +119,8 @@ class Nicepay
     {
         $url = config('nicepay-config.base_url') .'/'. $path;
 
-        return Http::post($url, $body)->body();
+        return Http::withHeaders([
+            'Content-Type' => 'application/json'
+        ])->post($url, $body)->body();
     }
 }
