@@ -125,16 +125,14 @@ class Nicepay
     }
 
     /**
-     * @param $iMid
      * @param $tXid
      * @param $amt
-     * @param $merchantKey
      * @param $merchantToken
      * @return boolean
      */
-    public function verifyIncomingNotification($iMid, $tXid, $amt, $merchantKey, $merchantToken)
+    public function verifyIncomingNotification($tXid, $amt, $merchantToken)
     {
-        if ($merchantToken == hash('sha256', $iMid . $tXid . $amt . $merchantKey)) {
+        if ($merchantToken == hash('sha256', config('nicepay-config.imid') . $tXid . $amt . config('nicepay-config.merchant_key'))) {
             return true;
         }
 
