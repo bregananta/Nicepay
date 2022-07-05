@@ -123,4 +123,21 @@ class Nicepay
             'Content-Type' => 'application/json'
         ])->post($url, $body)->body();
     }
+
+    /**
+     * @param $iMid
+     * @param $tXid
+     * @param $amt
+     * @param $merchantKey
+     * @param $merchantToken
+     * @return boolean
+     */
+    public function verifyIncomingNotification($iMid, $tXid, $amt, $merchantKey, $merchantToken)
+    {
+        if ($merchantToken == hash('sha256', $iMid . $tXid . $amt . $merchantKey)) {
+            return true;
+        }
+
+        return false;
+    }
 }
