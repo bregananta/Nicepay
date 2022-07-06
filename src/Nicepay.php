@@ -4,6 +4,7 @@ namespace Bregananta\Nicepay;
 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class Nicepay
 {
@@ -93,7 +94,55 @@ class Nicepay
             'merFixAcctId' => $merFixAcctld
         ];
 
+        if (config('nicepay-config.log') == true) {
+            Log::info('VA Register Payload Sent : '. PHP_EOL);
+            Log::info($body);
+        }
+
         return $this->apiRequest('nicepay/direct/v2/registration', $body);
+    }
+
+    /**
+     * @param $tXid
+     * @param $amt
+     * @param $merchantToken
+     * @return boolean
+     */
+    public function verifyIncomingNotification($tXid, $amt, $merchantToken)
+    {
+        if ($merchantToken == hash('sha256', config('nicepay-config.imid') . $tXid . $amt . config('nicepay-config.merchant_key'))) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param $referenceNo
+     * @param $tXid
+     * @param $amt
+     * @return string
+     */
+    public function statusInquiry($referenceNo, $tXid, $amt)
+    {
+        $timeStamp = Carbon::parse(now('Asia/Jakarta'));
+        $timeStamp = $timeStamp->format('YmdHis');
+
+        $body = [
+            'timeStamp' => $timeStamp,
+            'iMid' => config('nicepay-config.imid'),
+            'merchantToken' => $this->getMerchantToken($timeStamp, $referenceNo, (int)$amt),
+            'tXid' => $tXid,
+            'referenceNo' => $referenceNo,
+            'amt' => (int)$amt
+        ];
+
+        if (config('nicepay-config.log') == true) {
+            Log::info('VA Payment Status Inquiry Payload Sent : '. PHP_EOL);
+            Log::info($body);
+        }
+
+        return $this->apiRequest('nicepay/direct/v2/inquiry', $body);
     }
 
     /**
@@ -119,23 +168,14 @@ class Nicepay
     {
         $url = config('nicepay-config.base_url') .'/'. $path;
 
+        if (config('nicepay-config.log') == true) {
+            Log::info('Nicepay Endpoint : '. PHP_EOL);
+            Log::info($url);
+        }
+
         return Http::withHeaders([
             'Content-Type' => 'application/json'
         ])->post($url, $body)->body();
     }
 
-    /**
-     * @param $tXid
-     * @param $amt
-     * @param $merchantToken
-     * @return boolean
-     */
-    public function verifyIncomingNotification($tXid, $amt, $merchantToken)
-    {
-        if ($merchantToken == hash('sha256', config('nicepay-config.imid') . $tXid . $amt . config('nicepay-config.merchant_key'))) {
-            return true;
-        }
-
-        return false;
-    }
 }
