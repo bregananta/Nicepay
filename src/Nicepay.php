@@ -127,7 +127,7 @@ class Nicepay
      */
     public function cancelTransaction(string $tXid, string $payMethod, string $cancelMsg, $amt, string $cancelUserId, 
                                     string $cancelUserInfo = '', string $cancelServerIp = '', string $cancelUserIp = '', 
-                                    string $cancelType = 1, string $referenceNo = '', $cancelRetryCnt = 1, 
+                                    string $cancelType = '1', string $referenceNo = '', $cancelRetryCnt = 1, 
                                     string $preauthToken = '', string $worker = '')
     {
         $timeStamp = Carbon::parse(now('Asia/Jakarta'));
