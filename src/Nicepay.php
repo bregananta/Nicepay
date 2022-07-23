@@ -58,9 +58,14 @@ class Nicepay
         $timeStamp = Carbon::parse(now('Asia/Jakarta'));
         $timeStamp = $timeStamp->format('YmdHis');
 
+        $dbprocess_url = config('nicepay-config.dbprocess_url');
+        if (config('nicepay-config.dev') == true) {
+            $dbprocess_url = config('nicepay-config.dev_dbprocess_url');
+        }
+
         $body = [
             'timeStamp' => $timeStamp,
-            'iMid' => config('nicepay-config.imid'),
+            'iMid' => $this->getImid(),
             'payMethod' => '02',
             'currency' => $currency,
             'amt' => (int)$amt,
@@ -82,7 +87,7 @@ class Nicepay
             'deliveryPostCd' => $deliveryPostCd,
             'deliveryCountry' => $deliveryCountry,
             'description' => $description,
-            'dbProcessUrl' => config('nicepay-config.dbprocess_url'),
+            'dbProcessUrl' => $dbprocess_url,
             'merchantToken' => $this->getMerchantToken($timeStamp, $referenceNo, (int)$amt),
             'reqDomain' => $reqDomain,
             'reqServerIP' => $reqServerIP,
@@ -131,7 +136,7 @@ class Nicepay
         $body = [
             'timeStamp' => $timeStamp,
             'tXid' => $tXid,
-            'iMid' => config('nicepay-config.imid'),
+            'iMid' => $this->getImid(),
             'payMethod' => $payMethod,
             'cancelType' => $cancelType,
             'cancelMsg' => $cancelMsg,
@@ -183,7 +188,7 @@ class Nicepay
 
         $body = [
             'timeStamp' => $timeStamp,
-            'iMid' => config('nicepay-config.imid'),
+            'iMid' => $this->getImid(),
             'merchantToken' => $this->getMerchantToken($timeStamp, $referenceNo, (int)$amt),
             'tXid' => $tXid,
             'referenceNo' => $referenceNo,
@@ -206,8 +211,8 @@ class Nicepay
      */
     protected function getMerchantToken($timestamp, $referenceNo, $amount)
     {
-        $iMid = config('nicepay-config.imid');
-        $merchantKey = config('nicepay-config.merchant_key');
+        $iMid = $this->getImid();
+        $merchantKey = $this->getMerchantKey();
 
         return hash('sha256', $timestamp . $iMid . $referenceNo . $amount . $merchantKey);
     }
@@ -219,7 +224,7 @@ class Nicepay
      */
     protected function apiRequest($path, $body)
     {
-        $url = config('nicepay-config.base_url') .'/'. $path;
+        $url = $this->getBaseUrl() .'/'. $path;
 
         if (config('nicepay-config.log') == true) {
             Log::info('Nicepay Endpoint : '. PHP_EOL);
@@ -229,6 +234,45 @@ class Nicepay
         return Http::withHeaders([
             'Content-Type' => 'application/json'
         ])->post($url, $body)->body();
+    }
+
+    /**
+     * return string
+     */
+    protected function getImid()
+    {
+        $imid = config('nicepay-config.imid');
+        if (config('nicepay-config.dev') == true) {
+            $imid = config('nicepay-config.dev_imid');
+        }
+
+        return $imid;
+    }
+
+    /**
+     * return string
+     */
+    protected function getMerchantKey()
+    {
+        $merchantKey = config('nicepay-config.merchant_key');
+        if (config('nicepay-config.dev') == true) {
+            $merchantKey = config('nicepay-config.dev_merchant_key');
+        }
+
+        return $merchantKey;
+    }
+
+    /**
+     * return string
+     */
+    protected function getBaseUrl()
+    {
+        $baseUrl = config('nicepay-config.base_url');
+        if (config('nicepay-config.dev') == true) {
+            $baseUrl = config('nicepay-config.dev_base_url');
+        }
+
+        return $baseUrl;
     }
 
 }
