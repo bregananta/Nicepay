@@ -3,8 +3,10 @@
 namespace Bregananta\Nicepay;
 
 use Carbon\Carbon;
+use Faker\Core\Number;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class Nicepay
 {
@@ -100,6 +102,57 @@ class Nicepay
         }
 
         return $this->apiRequest('nicepay/direct/v2/registration', $body);
+    }
+
+    /**
+     * @param string $tXid
+     * @param string $payMethod
+     * @param string $cancelMsg
+     * @param $amt
+     * @param string $cancelUserId
+     * @param string $cancelUserInfo
+     * @param string $cancelServerIp
+     * @param string $cancelUserIp
+     * @param string $cancelType
+     * @param string $referenceNo
+     * @param $cancelRetryCnt
+     * @param string $preauthToken
+     * @param string $worker
+     * @return string
+     */
+    public function cancelTransaction(string $tXid, string $payMethod, string $cancelMsg, $amt, string $cancelUserId, 
+                                    string $cancelUserInfo = '', string $cancelServerIp = '', string $cancelUserIp = '', 
+                                    string $cancelType = 1, string $referenceNo = '', $cancelRetryCnt = 1, 
+                                    string $preauthToken = '', string $worker = '')
+    {
+        $timeStamp = Carbon::parse(now('Asia/Jakarta'));
+        $timeStamp = $timeStamp->format('YmdHis');
+
+        $body = [
+            'timeStamp' => $timeStamp,
+            'tXid' => $tXid,
+            'iMid' => config('nicepay-config.imid'),
+            'payMethod' => $payMethod,
+            'cancelType' => $cancelType,
+            'cancelMsg' => $cancelMsg,
+            'merchantToken' => $this->getMerchantToken($timeStamp, $tXid, (int)$amt),
+            'preauthToken' => $preauthToken,
+            'amt' => $amt,
+            'cancelServerIp' => $cancelServerIp,
+            'cancelUserId' => $cancelUserId,
+            'cancelUserIp' => $cancelUserIp,
+            'cancelUserInfo' => $cancelUserInfo,
+            'cancelRetryCnt' => $cancelRetryCnt,
+            'referenceNo' => $referenceNo,
+            'worker' => $worker
+        ];
+
+        if (config('nicepay-config.log') == true) {
+            Log::info('Cancel Transaction Payload Sent : '. PHP_EOL);
+            Log::info($body);
+        }
+
+        return $this->apiRequest('nicepay/direct/v2/cancel', $body);
     }
 
     /**
